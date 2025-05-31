@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct MyBooksApp: App {
@@ -13,5 +14,13 @@ struct MyBooksApp: App {
         WindowGroup {
             ContentView()
         }
+        // 指定容器，管理数据
+        .modelContainer(for: Book.self)
+    }
+    
+    
+    // 查看本地数据库的路径
+    init() {
+        print(URL.applicationSupportDirectory.path(percentEncoded: false))
     }
 }
