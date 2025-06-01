@@ -28,7 +28,9 @@ struct NewBookView: View {
                     let newBook = Book(title: title, author: author)
                     // 2、C——插入数据库
                     context.insert(newBook)
-                    // 3、关闭弹窗
+                    // 3、保存数据
+                    try? context.save()
+                    // 4、关闭弹窗
                     dismiss()
                 } label: {
                     Text("Create")

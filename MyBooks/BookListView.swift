@@ -16,6 +16,8 @@ struct BookListView: View {
     // 数据库查询
     @Query(sort: \Book.title) private var books: [Book]
     
+    @Environment(\.modelContext) private var context
+    
     var body: some View {
         NavigationStack {
             Group {
@@ -48,7 +50,16 @@ struct BookListView: View {
                                     }
                                 }
                             }
-
+                            
+                        }
+                        // indexSet是数组元素的索引集合
+                        .onDelete { indexSet in
+                            indexSet.forEach { index in
+                                let book = books[index]
+                                context.delete(book)
+                            }
+                            
+                            try? context.save()
                         }
                     }
                     .listStyle(.plain)
