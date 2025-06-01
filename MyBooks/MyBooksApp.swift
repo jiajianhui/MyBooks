@@ -12,7 +12,7 @@ import SwiftData
 struct MyBooksApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            BookListView()
         }
         // 指定容器，管理数据
         .modelContainer(for: Book.self)

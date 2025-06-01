@@ -8,6 +8,7 @@
 import Foundation
 
 import SwiftData
+import SwiftUI
 
 @Model
 class Book {
@@ -40,9 +41,22 @@ class Book {
         self.rating = rating
         self.status = status
     }
+    
+    // 计算属性；不改变模型结构
+    var icon: Image {
+        switch status {
+        case .onShelf:
+            Image(systemName: "checkmark.diamond.fill")
+        case .inProgress:
+            Image(systemName: "book.fill")
+        case .completed:
+            Image(systemName: "books.vertical.fill")
+        }
+    }
 }
 
 
+// Swift 中的枚举可以具有「原始值」，比如 Int、String、Double 等。如果你写成 enum Status: Int，那每个 case 默认会从 0 开始自增
 enum Status: Int, Codable, Identifiable, CaseIterable {
     case onShelf, inProgress, completed
     var id: Self {
