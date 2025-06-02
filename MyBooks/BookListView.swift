@@ -13,8 +13,8 @@ struct BookListView: View {
     // 弹窗状态
     @State private var createNewBook = false
     
-    // 数据库查询
-    @Query(sort: \Book.title) private var books: [Book]
+    // 数据库查询——按添加日期、降序排序
+    @Query(sort: [SortDescriptor(\Book.dateAdded, order: .reverse)]) private var books: [Book]
     
     @Environment(\.modelContext) private var context
     
@@ -27,7 +27,7 @@ struct BookListView: View {
                     List {
                         ForEach(books) { book in
                             NavigationLink {
-                                Text(book.title)
+                                EditBookView(book: book)
                             } label: {
                                 HStack(spacing: 10) {
                                     book.icon
@@ -40,7 +40,7 @@ struct BookListView: View {
                                         
                                         if let rating = book.rating {
                                             HStack {
-                                                ForEach(0..<rating, id: \.self) { _ in
+                                                ForEach(1..<rating, id: \.self) { _ in
                                                     Image(systemName: "star.fill")
                                                         .imageScale(.small)
                                                         .foregroundStyle(Color.yellow)
