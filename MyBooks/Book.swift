@@ -56,12 +56,23 @@ class Book {
 }
 
 
-// Swift 中的枚举可以具有「原始值」，比如 Int、String、Double 等。如果你写成 enum Status: Int，那每个 case 默认会从 0 开始自增
+
+/**
+ Int    每个 case 的底层原始值为 Int（0、1、2）
+ Codable    使 Status 可以被编码/解码（用于 JSON 读写等）
+ Identifiable    用于 ForEach 等视图中唯一标识（通过 id 实现）
+ CaseIterable    自动生成 allCases 属性（表示该枚举中所有的 case，方便遍历）
+ */
 enum Status: Int, Codable, Identifiable, CaseIterable {
     case onShelf, inProgress, completed
-    var id: Self {
+    
+    // 这是 Identifiable 协议所要求的 id 属性。它返回自身 self，意思是每个枚举值本身就是唯一标识。
+    // 枚举（enum）定义了一组有限的可能值；枚举的实例是这些可能值中的一个具体值。
+    var id: Self {  // Self——当前类型（Status）、self——当前实例（比如 .onShelf）
         self
     }
+    
+    // descr 是一个 自定义的计算属性，用于将每种状态转化为可读文本，适合用在界面中展示
     var descr: String {
         switch self {
         case .onShelf:
