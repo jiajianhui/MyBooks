@@ -19,7 +19,7 @@ class Book {
     var dateCompleted: Date
     var summary: String
     var rating: Int?
-    var status: Status
+    var status: Status.RawValue  // 数据库无法直接比较枚举类型 enum，只能比较基本类型，比如 Int、String。
     
     // 初始化；title和author为必填项，其它属性设置了默认值
     init(
@@ -39,18 +39,18 @@ class Book {
         self.dateCompleted = dateCompleted
         self.summary = summary
         self.rating = rating
-        self.status = status
+        self.status = status.rawValue
     }
     
     // 计算属性；不改变模型结构
     var icon: Image {
-        switch status {
+        switch Status(rawValue: status)! {
         case .onShelf:
-            Image(systemName: "checkmark.diamond.fill")
+            Image(systemName: "books.vertical.fill")
         case .inProgress:
             Image(systemName: "book.fill")
         case .completed:
-            Image(systemName: "books.vertical.fill")
+            Image(systemName: "checkmark.diamond.fill")
         }
     }
 }

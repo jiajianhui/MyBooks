@@ -138,7 +138,7 @@ struct EditBookView: View {
                     book.author = author
                     book.summary = summary
                     book.rating = rating
-                    book.status = status
+                    book.status = status.rawValue
                     book.dateAdded = dateAdded
                     book.dateStarted = dateStarted
                     book.dateCompleted = dateCompleted
@@ -161,7 +161,7 @@ struct EditBookView: View {
             author = book.author
             summary = book.summary
             rating = book.rating
-            status = book.status
+            status = Status(rawValue: book.status)!
             dateAdded = book.dateAdded
             dateStarted = book.dateStarted
             dateCompleted = book.dateCompleted
@@ -177,7 +177,7 @@ struct EditBookView: View {
         || author != book.author
         || summary != book.summary
         || rating != book.rating
-        || status != book.status
+        || status != Status(rawValue: book.status)!
         || dateAdded != book.dateAdded
         || dateStarted != book.dateStarted
         || dateCompleted != book.dateCompleted

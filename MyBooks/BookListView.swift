@@ -8,63 +8,38 @@
 import SwiftUI
 import SwiftData
 
+// 筛选
+enum SortOrder: String, Identifiable, CaseIterable {
+    case status, title, author
+    
+    var id: Self {
+        self
+    }
+}
+
+
+
 struct BookListView: View {
     
     // 弹窗状态
     @State private var createNewBook = false
     
-    // 数据库查询——按添加日期、降序排序
-    @Query(sort: [SortDescriptor(\Book.dateAdded, order: .reverse)]) private var books: [Book]
-    
-    @Environment(\.modelContext) private var context
+    // sort
+    @State private var sortOrder = SortOrder.status
     
     var body: some View {
         NavigationStack {
-            Group {
-                if books.isEmpty {
-                    ContentUnavailableView("Enter your first book.", systemImage: "book.fill")
-                } else {
-                    List {
-                        ForEach(books) { book in
-                            NavigationLink {
-                                EditBookView(book: book)
-                            } label: {
-                                HStack(spacing: 10) {
-                                    book.icon
-                                    VStack(alignment: .leading) {
-                                        Text(book.title)
-                                            .font(.title2)
-                                        Text(book.author)
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
-                                        
-                                        if let rating = book.rating {
-                                            HStack {
-                                                ForEach(1..<rating, id: \.self) { _ in
-                                                    Image(systemName: "star.fill")
-                                                        .imageScale(.small)
-                                                        .foregroundStyle(Color.yellow)
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            
-                        }
-                        // indexSet是数组元素的索引集合
-                        .onDelete { indexSet in
-                            indexSet.forEach { index in
-                                let book = books[index]
-                                context.delete(book)
-                            }
-                            
-                            try? context.save()
-                        }
-                    }
-                    .listStyle(.plain)
+            
+            // 筛选picker
+            Picker("", selection: $sortOrder) {
+                ForEach(SortOrder.allCases) { sortOrder in
+                    Text("sort by \(sortOrder)")
                 }
             }
+            
+            // 数据列表
+            QueryBookListView(sortOrder: sortOrder)
+            
             
             .navigationTitle("My Books")
             .toolbar {
