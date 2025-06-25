@@ -17,9 +17,16 @@ class Book {
     var dateAdded: Date
     var dateStarted: Date
     var dateCompleted: Date
-    var summary: String
+    
+    // 修改属性名
+    @Attribute(originalName: "summary")
+    var synopsis: String
+    
     var rating: Int?
     var status: Status.RawValue  // 数据库无法直接比较枚举类型 enum，只能比较基本类型，比如 Int、String。
+    
+    // 添加新属性
+    var recommendedBy: String = ""
     
     // 初始化；title和author为必填项，其它属性设置了默认值
     init(
@@ -30,16 +37,18 @@ class Book {
         dateCompleted: Date = Date.distantPast,
         summary: String = "",
         rating: Int? = nil,
-        status: Status = .onShelf
+        status: Status = .onShelf,
+        recommendedBy: String = ""
     ) {
         self.title = title
         self.author = author
         self.dateAdded = dateAdded
         self.dateStarted = dateStarted
         self.dateCompleted = dateCompleted
-        self.summary = summary
+        self.synopsis = summary
         self.rating = rating
         self.status = status.rawValue
+        self.recommendedBy = recommendedBy
     }
     
     // 计算属性；不改变模型结构

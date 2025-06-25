@@ -17,10 +17,11 @@ struct EditBookView: View {
     @State private var rating: Int?
     @State private var title = ""
     @State private var author = ""
-    @State private var summary = ""
+    @State private var synopsis = ""
     @State private var dateAdded = Date.distantPast
     @State private var dateStarted = Date.distantPast
     @State private var dateCompleted = Date.distantPast
+    @State private var recommendedBy = ""
     
     // 避免因为appear中的赋值操作而触发onChange函数
     @State private var firstView = true
@@ -114,11 +115,17 @@ struct EditBookView: View {
                 Text("Author")
                     .foregroundStyle(.secondary)
             }
+            LabeledContent {
+                TextField("", text: $recommendedBy)
+            } label: {
+                Text("RecommendedBy")
+                    .foregroundStyle(.secondary)
+            }
             
             Divider()
-            Text("Summary")
+            Text("Synopsis")
                 .foregroundStyle(.secondary)
-            TextEditor(text: $summary)
+            TextEditor(text: $synopsis)
                 .padding()
                 .overlay {
                     RoundedRectangle(cornerRadius: 10)
@@ -136,12 +143,13 @@ struct EditBookView: View {
                 Button {
                     book.title = title
                     book.author = author
-                    book.summary = summary
+                    book.synopsis = synopsis
                     book.rating = rating
                     book.status = status.rawValue
                     book.dateAdded = dateAdded
                     book.dateStarted = dateStarted
                     book.dateCompleted = dateCompleted
+                    book.recommendedBy = recommendedBy
                     
                     // save
                     try? context.save()
@@ -159,12 +167,13 @@ struct EditBookView: View {
         .onAppear {
             title = book.title
             author = book.author
-            summary = book.summary
+            synopsis = book.synopsis
             rating = book.rating
             status = Status(rawValue: book.status)!
             dateAdded = book.dateAdded
             dateStarted = book.dateStarted
             dateCompleted = book.dateCompleted
+            recommendedBy = book.recommendedBy
             
             
             firstView = false
@@ -175,12 +184,13 @@ struct EditBookView: View {
     var changed: Bool {
         title != book.title
         || author != book.author
-        || summary != book.summary
+        || synopsis != book.synopsis
         || rating != book.rating
         || status != Status(rawValue: book.status)!
         || dateAdded != book.dateAdded
         || dateStarted != book.dateStarted
         || dateCompleted != book.dateCompleted
+        || recommendedBy != book.recommendedBy
     }
 }
 
