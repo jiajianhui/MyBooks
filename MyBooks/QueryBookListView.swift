@@ -16,10 +16,10 @@ struct QueryBookListView: View {
     @Query private var books: [Book]
     
     // 初始化
-    init(sortOrder: SortOrder) {
+    init(searchText: String, sortOrder: SortOrder) {
         
+        // 排序规则构建（默认升序排序）
         let sortDescriptors: [SortDescriptor<Book>] = switch sortOrder {
-            
             case .status:
                 // 若status 值相同，则次级排序用 title 字段排序。
                 [SortDescriptor(\Book.status), SortDescriptor(\Book.title)]
@@ -29,8 +29,15 @@ struct QueryBookListView: View {
                 [SortDescriptor(\Book.author)]
         }
         
-        // 动态创建一个带排序的查询实例
-        _books = Query(sort: sortDescriptors)
+        // 谓词过滤器（搜索）
+        let predicate = #Predicate<Book> { book in
+            book.title.localizedStandardContains(searchText) ||
+            book.author.localizedStandardContains(searchText) ||
+            searchText.isEmpty // 如果搜索框为空，就不过滤，显示全部
+        }
+        
+        // 动态创建一个带排序、搜索的查询实例；为 @Query private var books 提供自定义查询配置
+        _books = Query(filter: predicate, sort: sortDescriptors)
         
         // 查看视图是否被重建
         print("📦 View Rebuilt: sortOrder = \(sortOrder)")

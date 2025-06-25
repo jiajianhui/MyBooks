@@ -27,6 +27,9 @@ struct BookListView: View {
     // sort
     @State private var sortOrder = SortOrder.status
     
+    // search
+    @State private var searchText = ""
+    
     var body: some View {
         NavigationStack {
             
@@ -38,8 +41,7 @@ struct BookListView: View {
             }
             
             // 数据列表
-            QueryBookListView(sortOrder: sortOrder)
-            
+            QueryBookListView(searchText: searchText, sortOrder: sortOrder)
             
             .navigationTitle("My Books")
             .toolbar {
@@ -49,7 +51,6 @@ struct BookListView: View {
                     Image(systemName: "plus.circle.fill")
                         .imageScale(.large)
                 }
-
             }
             
             .sheet(isPresented: $createNewBook) {
@@ -57,6 +58,9 @@ struct BookListView: View {
                     .presentationDetents([.medium])
                     .presentationDragIndicator(.visible)
             }
+            
+            // 搜索框
+            .searchable(text: $searchText, prompt: Text("Search title or author"))
         }
         
     }
