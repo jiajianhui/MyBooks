@@ -28,6 +28,10 @@ class Book {
     // 添加新属性
     var recommendedBy: String = ""
     
+    // 一对多
+    @Relationship(deleteRule: .cascade)  // 删除book时，关联的quote也将被删除
+    var quotes: [Quote]?
+    
     // 初始化；title和author为必填项，其它属性设置了默认值
     init(
         title: String,

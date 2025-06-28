@@ -132,6 +132,15 @@ struct EditBookView: View {
                         .stroke(Color(uiColor: .tertiarySystemFill), lineWidth: 1)
                         
                 }
+            
+            // quote
+            NavigationLink {
+                QuotesListView(book: book)
+            } label: {
+                let count = book.quotes?.count ?? 0
+                Label("\(count) Quotes", systemImage: "quote.opening")
+            }
+
         }
         .padding()
         .textFieldStyle(.roundedBorder)
@@ -194,8 +203,8 @@ struct EditBookView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
+//#Preview {
+//    NavigationStack {
 //        EditBookView()
-    }
-}
+//    }
+//}
