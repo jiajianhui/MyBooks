@@ -32,6 +32,10 @@ class Book {
     @Relationship(deleteRule: .cascade)  // 删除book时，关联的quote也将被删除
     var quotes: [Quote]?
     
+    // 多对多
+    @Relationship(inverse: \Genre.book)
+    var genres: [Genre]?
+    
     // 初始化；title和author为必填项，其它属性设置了默认值
     init(
         title: String,

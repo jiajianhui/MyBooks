@@ -62,12 +62,24 @@ struct QueryBookListView: View {
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                     
+                                    // 评分
                                     if let rating = book.rating {
                                         HStack {
                                             ForEach(1..<rating, id: \.self) { _ in
                                                 Image(systemName: "star.fill")
                                                     .imageScale(.small)
                                                     .foregroundStyle(Color.yellow)
+                                            }
+                                        }
+                                    }
+                                    
+                                    // 标签
+                                    if let genres = book.genres {
+                                        // 自适应滚动，标签过多时是滚动时图，反之为静态视图
+                                        ViewThatFits {
+                                            GenreStackView(genres: genres)
+                                            ScrollView(.horizontal, showsIndicators: false) {
+                                                GenreStackView(genres: genres)
                                             }
                                         }
                                     }

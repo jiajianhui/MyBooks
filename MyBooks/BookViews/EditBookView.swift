@@ -30,6 +30,9 @@ struct EditBookView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     
+    // genre
+    @State private var showGenre = false
+    
     var body: some View {
         HStack {
             Text("Status")
@@ -133,12 +136,33 @@ struct EditBookView: View {
                         
                 }
             
+            // 标签
+            if let genres = book.genres {
+                // 自适应滚动，标签过多时是滚动时图，反之为静态视图
+                ViewThatFits {
+                    GenreStackView(genres: genres)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        GenreStackView(genres: genres)
+                    }
+                }
+            }
+            
             // quote
-            NavigationLink {
-                QuotesListView(book: book)
-            } label: {
-                let count = book.quotes?.count ?? 0
-                Label("\(count) Quotes", systemImage: "quote.opening")
+            HStack {
+                Button("Genre", systemImage: "bookmark.fill") {
+                    showGenre.toggle()
+                }
+                .sheet(isPresented: $showGenre) {
+                    GenresView(book: book)
+                }
+                
+                
+                NavigationLink {
+                    QuotesListView(book: book)
+                } label: {
+                    let count = book.quotes?.count ?? 0
+                    Label("\(count) Quotes", systemImage: "quote.opening")
+                }
             }
 
         }
