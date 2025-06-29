@@ -29,6 +29,8 @@ struct NewGenreView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
+            .navigationTitle("New Genre")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }

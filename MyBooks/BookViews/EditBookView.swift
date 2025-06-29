@@ -153,7 +153,8 @@ struct EditBookView: View {
                     showGenre.toggle()
                 }
                 .sheet(isPresented: $showGenre) {
-                    GenresView(book: book)
+                    GenresListView(book: book)
+                        .presentationDragIndicator(.visible)
                 }
                 
                 
