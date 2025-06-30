@@ -25,45 +25,22 @@ struct GenresListView: View {
             Group {
                 // 没有标签时
                 if genres.isEmpty {
-                    ContentUnavailableView {
-                        Image(systemName: "bookmark.fill")
-                            .font(.largeTitle)
-                    } description: {
-                        Text("you need add some genres first.")
-                    } actions: {
-                        Button("Create Genre") {
-                            newGenre.toggle()
-                        }
-                        .buttonStyle(.borderedProminent)
-                    }
+                    EmptyGenreView(newGenre: $newGenre)
                 } else {
                     // 有书签时
                     List {
                         ForEach(genres) { genre in
                             HStack {
-                                if let bookGenres = book.genres {
-                                    if bookGenres.isEmpty {
-                                        Button {
-                                            addRemove(genre)
-                                        } label: {
-                                            Image(systemName: "circle")
-                                        }
-                                        .foregroundStyle(genre.hexColor)
-
-                                    } else {
-                                        Button {
-                                            addRemove(genre)
-                                        } label: {
-                                            // 如果book包含该标签，就选中
-                                            Image(systemName: bookGenres.contains(genre) ? "circle.fill" : "circle")
-                                        }
-                                        .foregroundStyle(genre.hexColor)
-                                    }
+                                Button {
+                                    addRemove(genre)
+                                } label: {
+                                    // 如果book包含该标签，就选中；book.genres?.contains(genre)是一个可选Bool，所以要与true进行比较
+                                    Image(systemName: book.genres?.contains(genre) == true ? "circle.fill" : "circle")
                                 }
-                                Text(genre.name)
+                                .foregroundStyle(genre.hexColor)
                                 
+                                Text(genre.name)
                             }
-                            
                         }
                         .onDelete { indexSet in
                             indexSet.forEach { index in
@@ -72,12 +49,8 @@ struct GenresListView: View {
                             }
                         }
                         
-                        Button("Create new genre") {
-                            newGenre.toggle()
-                        }
+                        CreateGenreButton(newGenre: $newGenre)
                     }
-                    
-                    
                 }
             }
             .navigationTitle("Genres")
@@ -92,24 +65,50 @@ struct GenresListView: View {
     
     // 添加、移除标签的函数
     func addRemove(_ genre: Genre) {
-        if let bookGenres = book.genres {
-            if bookGenres.isEmpty {
-                book.genres?.append(genre)
-                try? context.save()
-            } else {
-                if bookGenres.contains(genre),
-                   let index = bookGenres.firstIndex(where: {$0.id == genre.id}) {
-                    book.genres?.remove(at: index)
-                    try? context.save()
-                } else {
-                    book.genres?.append(genre)
-                    try? context.save()
-                }
-                    
+        var bookGenres = book.genres ?? []
+        
+        if let index = bookGenres.firstIndex(where: {$0.id == genre.id}) {
+            bookGenres.remove(at: index)
+        } else {
+            bookGenres.append(genre)
+        }
+        
+        book.genres = bookGenres
+        try? context.save()
+        
+    }
+}
+
+
+// 子视图
+struct CreateGenreButton: View {
+    @Binding var newGenre: Bool
+    
+    var body: some View {
+        Button("Create new genre") {
+            newGenre.toggle()
+        }
+    }
+}
+
+struct EmptyGenreView: View {
+    @Binding var newGenre: Bool
+    
+    var body: some View {
+        ContentUnavailableView {
+            Image(systemName: "bookmark.fill")
+                .font(.largeTitle)
+        } description: {
+            Text("you need add some genres first.")
+        } actions: {
+            Button("Create new genre") {
+                newGenre.toggle()
             }
         }
     }
 }
+
+
 
 //#Preview {
 //    NavigationStack {

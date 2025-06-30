@@ -28,6 +28,8 @@ struct NewGenreView: View {
                     dismiss()
                 }
                 .frame(maxWidth: .infinity, alignment: .trailing)
+                .disabled(name.isEmpty)
+                .buttonStyle(.bordered)
             }
             .navigationTitle("New Genre")
             .navigationBarTitleDisplayMode(.inline)

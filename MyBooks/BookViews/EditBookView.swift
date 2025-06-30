@@ -147,8 +147,9 @@ struct EditBookView: View {
                 }
             }
             
-            // quote
+            // quote genre
             HStack {
+                
                 Button("Genre", systemImage: "bookmark.fill") {
                     showGenre.toggle()
                 }
@@ -157,7 +158,6 @@ struct EditBookView: View {
                         .presentationDragIndicator(.visible)
                 }
                 
-                
                 NavigationLink {
                     QuotesListView(book: book)
                 } label: {
@@ -165,6 +165,8 @@ struct EditBookView: View {
                     Label("\(count) Quotes", systemImage: "quote.opening")
                 }
             }
+            .buttonStyle(.bordered)
+            .frame(maxWidth: .infinity, alignment: .trailing)
 
         }
         .padding()
