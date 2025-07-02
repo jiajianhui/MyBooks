@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 // 筛选
-enum SortOrder: String, Identifiable, CaseIterable {
+enum SortOrder: LocalizedStringResource, Identifiable, CaseIterable {
     case status, title, author
     
     var id: Self {
@@ -36,7 +36,7 @@ struct BookListView: View {
             // 筛选picker
             Picker("", selection: $sortOrder) {
                 ForEach(SortOrder.allCases) { sortOrder in
-                    Text("sort by \(sortOrder)")
+                    Text("sort by \(sortOrder.rawValue)")
                 }
             }
             
@@ -55,7 +55,6 @@ struct BookListView: View {
             
             .sheet(isPresented: $createNewBook) {
                 NewBookView()
-                    .presentationDetents([.medium])
                     .presentationDragIndicator(.visible)
             }
             
@@ -66,7 +65,13 @@ struct BookListView: View {
     }
 }
 
-#Preview {
+#Preview("English") {
     BookListView()
         .modelContainer(for: Book.self, inMemory: true)
+}
+
+#Preview("Chinese") {
+    BookListView()
+        .modelContainer(for: Book.self, inMemory: true)
+        .environment(\.locale, Locale(identifier: "Zh"))
 }

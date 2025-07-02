@@ -90,7 +90,7 @@ enum Status: Int, Codable, Identifiable, CaseIterable {
     }
     
     // descr 是一个 自定义的计算属性，用于将每种状态转化为可读文本，适合用在界面中展示
-    var descr: String {
+    var descr: LocalizedStringResource {
         switch self {
         case .onShelf:
             "On Shelf"
