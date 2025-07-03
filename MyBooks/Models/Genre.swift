@@ -11,8 +11,8 @@ import SwiftData
 
 @Model
 class Genre {
-    var name: String
-    var color: String
+    var name: String = ""
+    var color: String = "FF0000"
     
     // 多对多
     var book: [Book]?

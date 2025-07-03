@@ -12,18 +12,20 @@ import SwiftUI
 
 @Model
 class Book {
-    var title: String
-    var author: String
-    var dateAdded: Date
-    var dateStarted: Date
-    var dateCompleted: Date
+    
+    // 在SwiftData中启用CloudKit时，所有字属性必须是可选，或有默认值，这样CloudKit就能完成初始化
+    var title: String = ""
+    var author: String = ""
+    var dateAdded: Date = Date.now
+    var dateStarted: Date = Date.distantPast
+    var dateCompleted: Date = Date.distantPast
     
     // 修改属性名
     @Attribute(originalName: "summary")
-    var synopsis: String
+    var synopsis: String = ""
     
     var rating: Int?
-    var status: Status.RawValue  // 数据库无法直接比较枚举类型 enum，只能比较基本类型，比如 Int、String。
+    var status: Status.RawValue = Status.onShelf.rawValue  // 数据库无法直接比较枚举类型 enum，只能比较基本类型，比如 Int、String。
     
     // 添加新属性
     var recommendedBy: String = ""
