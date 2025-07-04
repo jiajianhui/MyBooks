@@ -110,11 +110,12 @@ struct QuotesListView: View {
             // 删除
             .onDelete { indexSet in
                 indexSet.forEach { index in
-                    if let quote = book.quotes?[index] {
-                        context.delete(quote)
-                        try?context.save()
-                    }
+                    // 拿到已排序列表中的数据，然后再去删除该数据（而非使用排序后的index）
+                    let quote = sortedQuotes[index]
+                    context.delete(quote)
                 }
+                
+                try? context.save()
             }
         }
         .listStyle(.plain)

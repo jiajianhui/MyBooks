@@ -54,7 +54,7 @@ struct EditBookView: View {
                 // Date Started 在进行中或者已完成中都会显示
                 if status == .inProgress || status == .completed {
                     LabeledContent {
-                        DatePicker("", selection: $dateStarted, displayedComponents: .date)
+                        DatePicker("", selection: $dateStarted, in: dateAdded..., displayedComponents: .date)
                     } label: {
                         Text("Date Started")
                     }
@@ -62,7 +62,7 @@ struct EditBookView: View {
                 
                 if status == .completed {
                     LabeledContent {
-                        DatePicker("", selection: $dateCompleted, displayedComponents: .date)
+                        DatePicker("", selection: $dateCompleted, in: dateStarted..., displayedComponents: .date)
                     } label: {
                         Text("Date Completed")
                     }
@@ -211,8 +211,30 @@ struct EditBookView: View {
             dateCompleted = book.dateCompleted
             recommendedBy = book.recommendedBy
             
+            /*
+             关于 @State 的异步更新
+             @State 的更新（比如 status = ...）并不是立刻同步生效的，而是在下一轮 RunLoop 的刷新周期中再应用更新。即使 UI 还没更新完成，.onChange(of:) 也可能已经触发了
+             在 SwiftUI 中，.onChange(of:) 是通过监听绑定变量（比如 @State 或 @Binding）的变化来触发的。而这个“变化”并不依赖 UI 是否完成渲染
+             */
             
-            firstView = false
+            
+            /*
+             异步导致的changed异常
+             onAppear完成status赋值——status绑定在Picker上——触发onChange（不管之前是不是 .now，都赋一次新值，这会改变 @State 的值）——触发 @State 的变化， 进而导致changed变化
+             */
+            
+            
+            /*
+             使用DispatchQueue后的执行逻辑
+             1、页面第一次加载时，firstView == true，即使 SwiftUI 自动触发了 .onChange(of: status)，你也不会做任何操作。
+             2、然后，在下一次主线程循环时，将 firstView 设为 false。
+             3、用户后续主动更改状态才会进入 .onChange，这时再执行 dateStarted = .now 就完全没问题了。
+             */
+            
+            // 延迟到 UI 完全更新后再设为 false
+            DispatchQueue.main.async {
+                firstView = false
+            }
         }
     }
     
