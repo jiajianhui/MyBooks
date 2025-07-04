@@ -38,6 +38,10 @@ class Book {
     @Relationship(inverse: \Genre.book)
     var genres: [Genre]?
     
+    // 添加图片数据
+    @Attribute(.externalStorage) // 仅存储图片的引用，将实际图片存储在本地文件夹中
+    var bookCover: Data?
+    
     // 初始化；title和author为必填项，其它属性设置了默认值
     init(
         title: String,

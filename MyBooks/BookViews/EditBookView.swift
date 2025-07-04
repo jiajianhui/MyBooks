@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct EditBookView: View {
     
@@ -32,6 +33,10 @@ struct EditBookView: View {
     
     // genre
     @State private var showGenre = false
+    
+    // 图片相关
+    @State private var selectedBookCover: PhotosPickerItem?
+    @State private var selectedBookCoverData: Data?
     
     var body: some View {
         HStack {
@@ -101,22 +106,53 @@ struct EditBookView: View {
             }
             
             Divider()
-            LabeledContent {
-                RatingsView(maxRating: 5, currentRating: $rating, width: 34)
-            } label: {
-                Text("Ratting")
-            }
-            LabeledContent {
-                TextField("", text: $title)
-            } label: {
-                Text("Title")
-                    .foregroundStyle(.secondary)
-            }
-            LabeledContent {
-                TextField("", text: $author)
-            } label: {
-                Text("Author")
-                    .foregroundStyle(.secondary)
+            HStack {
+                PhotosPicker(selection: $selectedBookCover, matching: .images, photoLibrary: .shared()) {
+                    Group {
+                        if let selectedBookCoverData,
+                           let uiImage = UIImage(data: selectedBookCoverData) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFit()
+                        } else {
+                            Image(systemName: "photo")
+                                .resizable()
+                                .scaledToFit()
+                        }
+                    }
+                    .frame(width: 100)
+                    .overlay(alignment: .topTrailing) {
+                        if selectedBookCoverData != nil {
+                            Button {
+                                selectedBookCover = nil
+                                selectedBookCoverData = nil
+                            } label: {
+                                Image(systemName: "x.circle.fill")
+                                    .foregroundStyle(Color.red)
+                            }
+                        }
+                    }
+                }
+                
+                VStack {
+                    LabeledContent {
+                        RatingsView(maxRating: 5, currentRating: $rating, width: 34)
+                    } label: {
+                        Text("Ratting")
+                    }
+                    LabeledContent {
+                        TextField("", text: $title)
+                    } label: {
+                        Text("Title")
+                            .foregroundStyle(.secondary)
+                    }
+                    LabeledContent {
+                        TextField("", text: $author)
+                    } label: {
+                        Text("Author")
+                            .foregroundStyle(.secondary)
+                    }
+                }
             }
             LabeledContent {
                 TextField("", text: $recommendedBy)
@@ -186,6 +222,7 @@ struct EditBookView: View {
                     book.dateStarted = dateStarted
                     book.dateCompleted = dateCompleted
                     book.recommendedBy = recommendedBy
+                    book.bookCover = selectedBookCoverData
                     
                     // save
                     try? context.save()
@@ -210,6 +247,7 @@ struct EditBookView: View {
             dateStarted = book.dateStarted
             dateCompleted = book.dateCompleted
             recommendedBy = book.recommendedBy
+            selectedBookCoverData = book.bookCover
             
             /*
              关于 @State 的异步更新
@@ -236,6 +274,13 @@ struct EditBookView: View {
                 firstView = false
             }
         }
+        
+        // 图片数据转换
+        .task(id: selectedBookCover) {
+            if let data = try? await selectedBookCover?.loadTransferable(type: Data.self) {
+                selectedBookCoverData = data
+            }
+        }
     }
     
     // 数据是否更改
@@ -249,6 +294,7 @@ struct EditBookView: View {
         || dateStarted != book.dateStarted
         || dateCompleted != book.dateCompleted
         || recommendedBy != book.recommendedBy
+        || selectedBookCoverData != book.bookCover
     }
 }
 
