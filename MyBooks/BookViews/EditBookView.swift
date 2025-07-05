@@ -113,14 +113,16 @@ struct EditBookView: View {
                            let uiImage = UIImage(data: selectedBookCoverData) {
                             Image(uiImage: uiImage)
                                 .resizable()
-                                .scaledToFit()
+                                .scaledToFill()
                         } else {
                             Image(systemName: "photo")
                                 .resizable()
                                 .scaledToFit()
                         }
                     }
-                    .frame(width: 100)
+                    .frame(width: 100, height: 100)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    
                     .overlay(alignment: .topTrailing) {
                         if selectedBookCoverData != nil {
                             Button {
